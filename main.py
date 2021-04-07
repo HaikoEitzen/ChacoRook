@@ -21,32 +21,32 @@ def process_trick(trick):
     # get the points captured
     points = compute_trick_points(trick)
 
+    # put together the result, the winning card and the captured points
     return winning_card + " " + str(points) + "p"
 
 
 def compute_winning_card(trick):
-    # first character is the initial letter of the trump suit
-    trump_suit = trick[0]
-
-    # parse the remainder of the string as the played cards
-    rem_trick = trick[2:]
-    trick_cards = rem_trick.split(' ')
+    # get the trump suit and cards played in trick
+    trump_suit = get_trump_suit(trick)
+    trick_cards = get_trick_cards(trick)
 
     # if any of the cards played is the Rook, return the Rook
-    if trick_cards.__contains__(rook_card):
+    if rook_card in trick_cards:
         return rook_card
 
     # first card is the leading card and determines the leading suit of the trick
     leading_card = trick_cards[0]
-    leading_suit = leading_card[-1:]
-    leading_rank = int(leading_card[:-1])
+    leading_suit = get_card_suit(leading_card)
+    leading_rank = get_card_rank(leading_card)
 
     # assume leading card as winning card
     winning_suit = leading_suit
     winning_rank = leading_rank
+
+    # iterate through remaining cards
     for card in trick_cards[1:]:
-        card_rank = int(card[:-1])
-        card_suit = card[-1:]
+        card_rank = get_card_rank(card)
+        card_suit = get_card_suit(card)
         if is_suit_superior(card_suit, winning_suit, trump_suit):
             winning_suit = card_suit
             winning_rank = card_rank
@@ -60,9 +60,7 @@ def compute_winning_card(trick):
 
 
 def is_suit_superior(challenging_suit, defending_suit, trump_suit):
-    if challenging_suit == trump_suit and defending_suit != trump_suit:
-        return True
-    return False
+    return challenging_suit == trump_suit and defending_suit != trump_suit
 
 
 def is_rank_superior(challenging_rank, defending_rank):
@@ -70,22 +68,52 @@ def is_rank_superior(challenging_rank, defending_rank):
 
 
 def compute_trick_points(trick):
-    # the first character indicates the trump suit
-    # parse the remainder of the string as the played cards
-    rem_trick = trick[2:]
-    trick_cards = rem_trick.split(' ')
+    trick_cards = get_trick_cards(trick)
 
     # count and add the points on each card
     points = 0
     for card in trick_cards:
-        if card == rook_card:
-            points += points_per_card[rook_card]
-            continue
-        card_rank = int(card[:-1])
-        if card_rank in points_per_card:
-            points += points_per_card[card_rank]
+        points += get_card_points(card)
 
     return points
+
+
+def get_trump_suit(trick):
+    # first character is the initial letter of the trump suit
+    return trick[0]
+
+
+def get_trick_cards(trick):
+    # the first character indicates the trump suit
+    # parse the remainder of the string as the played cards
+    rem_trick = trick[2:]
+    return rem_trick.split(' ')
+
+
+def get_card_rank(card):
+    # assuming it is not the Rook card,
+    # the rank is in the first 1 or 2 characters, the last being the suit
+    return int(card[:-1])
+
+
+def get_card_suit(card):
+    # assuming it is not the Rook card,
+    # the suit is the last character of the card
+    return card[-1:]
+
+
+def get_card_points(card):
+    # special case: Rook card
+    if card == rook_card:
+        return points_per_card[rook_card]
+
+    # otherwise get card rank and access points dictionary
+    card_rank = get_card_rank(card)
+    if card_rank in points_per_card:
+        return points_per_card[card_rank]
+
+    # most cards have no points
+    return 0
 
 
 def main():
