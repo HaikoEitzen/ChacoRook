@@ -2,6 +2,7 @@
 ranks = list(range(5, 15)) + list([1])
 suits = ["R", "G", "Y", "B"]
 rook_card = "RK"
+points_per_card = {rook_card: 20, 1: 15, 14: 10, 10: 10, 5: 5}
 
 sample_inputs = [
     "Y 1R 12R 7Y 8R 11B",
@@ -14,6 +15,16 @@ sample_inputs = [
 def process_trick(trick):
     # assume valid input for now
 
+    # get the winning card
+    winning_card = compute_winning_card(trick)
+
+    # get the points captured
+    points = compute_trick_points(trick)
+
+    return winning_card + " " + str(points) + "p"
+
+
+def compute_winning_card(trick):
     # first character is the initial letter of the trump suit
     trump_suit = trick[0]
 
@@ -58,10 +69,29 @@ def is_rank_superior(challenging_rank, defending_rank):
     return ranks.index(challenging_rank) > ranks.index(defending_rank)
 
 
+def compute_trick_points(trick):
+    # the first character indicates the trump suit
+    # parse the remainder of the string as the played cards
+    rem_trick = trick[2:]
+    trick_cards = rem_trick.split(' ')
+
+    # count and add the points on each card
+    points = 0
+    for card in trick_cards:
+        if card == rook_card:
+            points += points_per_card[rook_card]
+            continue
+        card_rank = int(card[:-1])
+        if card_rank in points_per_card:
+            points += points_per_card[card_rank]
+
+    return points
+
+
 def main():
-    for sample in sample_inputs:
-        winning_card = process_trick(sample)
-        print(sample + " --> " + winning_card)
+    for trick in sample_inputs:
+        result = process_trick(trick)
+        print(trick + " --> " + result)
 
 
 if __name__ == '__main__':
