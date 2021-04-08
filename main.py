@@ -1,14 +1,20 @@
-# ranks in ascending order: 5-14, 1
-ranks = list(range(5, 15)) + list([1])
+# ranks in ascending order
+ranks = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1]
 suits = ["R", "G", "Y", "B"]
 rook_card = "RK"
-points_per_card = {rook_card: 20, 1: 15, 14: 10, 10: 10, 5: 5}
+points_per_card = {
+    rook_card: 20,
+    1:  15,
+    14: 10,
+    10: 10,
+    5:  5}
 
 sample_inputs = [
     "Y 1R 12R 7Y 8R 11B",
     "B 12B 1G 7B 14B",
     "G 6G 13G 12G RK 1G 10B",
-    "R RK 1R 1G 1B 1Y"
+    "R RK 1R 1G 1B 1Y",
+    "Y 5G 1R 14B 11R 1B"
 ]
 
 
@@ -22,7 +28,7 @@ def process_trick(trick):
     points = compute_trick_points(trick)
 
     # put together the result, the winning card and the captured points
-    return winning_card + " " + str(points) + "p"
+    return f'{winning_card} {points}p'
 
 
 def compute_winning_card(trick):
@@ -55,12 +61,12 @@ def compute_winning_card(trick):
             winning_rank = card_rank
 
     # put together the winning card
-    winning_card = str(winning_rank) + winning_suit
+    winning_card = f'{winning_rank}{winning_suit}'
     return winning_card
 
 
 def is_suit_superior(challenging_suit, defending_suit, trump_suit):
-    return challenging_suit == trump_suit and defending_suit != trump_suit
+    return challenging_suit == trump_suit != defending_suit
 
 
 def is_rank_superior(challenging_rank, defending_rank):
@@ -119,7 +125,7 @@ def get_card_points(card):
 def main():
     for trick in sample_inputs:
         result = process_trick(trick)
-        print(trick + " --> " + result)
+        print(f'{trick} --> {result}')
 
 
 if __name__ == '__main__':
