@@ -1,5 +1,6 @@
 # ranks in ascending order
 ranks = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1]
+# Red, Green, Yellow, Black
 suits = ["R", "G", "Y", "B"]
 rook_card = "RK"
 points_per_card = {
@@ -9,15 +10,15 @@ points_per_card = {
     10: 10,
     5:  5}
 
-sample_inputs = [
-    "Y 1R 12R 7Y 8R 11B",
-    "B 12B 1G 7B 14B",
-    "G 6G 13G 12G RK 1G 10B",
-    "R RK 1R 1G 1B 1Y",
-    "Y 5G 1R 14B 11R 1B",
-    "Y 5G 1R 14B 11G 1B",
-    "Y 5G 1R 14B 11G 1B 10Y",
-    "Y 5G 1R 14B 11G 1B 10G"
+sample_inputs = [           # expected winning card and captured points
+    "Y 1R 12R 7Y 8R 11B",       # 7Y    15p
+    "B 12B 1G 7B 14B",          # 14B   25p
+    "G 6G 13G 12G RK 1G 10B",   # RK    45p
+    "R RK 1R 1G 1B 1Y",         # RK    80p
+    "Y 5G 1R 14B 11R 1B",       # 5G    45p
+    "Y 5G 1R 14B 11G 1B",       # 11G   45p
+    "Y 5G 1R 14B 11G 1B 10Y",   # 10Y   55p
+    "Y 5G 1R 14B 11G 1B 10G"    # 11G   55p
 ]
 
 
