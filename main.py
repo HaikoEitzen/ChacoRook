@@ -14,7 +14,10 @@ sample_inputs = [
     "B 12B 1G 7B 14B",
     "G 6G 13G 12G RK 1G 10B",
     "R RK 1R 1G 1B 1Y",
-    "Y 5G 1R 14B 11R 1B"
+    "Y 5G 1R 14B 11R 1B",
+    "Y 5G 1R 14B 11G 1B",
+    "Y 5G 1R 14B 11G 1B 10Y",
+    "Y 5G 1R 14B 11G 1B 10G"
 ]
 
 
@@ -27,8 +30,8 @@ def process_trick(trick):
     # get the points captured
     points = compute_trick_points(trick)
 
-    # put together the result, the winning card and the captured points
-    return f'{winning_card} {points}p'
+    # return the winning card and the captured points
+    return winning_card, points
 
 
 def compute_winning_card(trick):
@@ -66,21 +69,20 @@ def compute_winning_card(trick):
 
 
 def is_suit_superior(challenging_suit, defending_suit, trump_suit):
+    # the defending suit is always at least the leading suit
+    # so only the trump suit is superior
     return challenging_suit == trump_suit != defending_suit
 
 
 def is_rank_superior(challenging_rank, defending_rank):
+    # ranks list is in ascending order, compare indices
     return ranks.index(challenging_rank) > ranks.index(defending_rank)
 
 
 def compute_trick_points(trick):
-    trick_cards = get_trick_cards(trick)
-
     # count and add the points on each card
-    points = 0
-    for card in trick_cards:
-        points += get_card_points(card)
-
+    trick_cards = get_trick_cards(trick)
+    points = sum(get_card_points(card) for card in trick_cards)
     return points
 
 
@@ -124,8 +126,8 @@ def get_card_points(card):
 
 def main():
     for trick in sample_inputs:
-        result = process_trick(trick)
-        print(f'{trick} --> {result}')
+        winning_card, points = process_trick(trick)
+        print(f'{trick} --> {winning_card} {points}p')
 
 
 if __name__ == '__main__':
