@@ -1,4 +1,4 @@
-# ranks in ascending order
+# ranks in ascending order, excluding the Rook
 ranks = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1]
 # Red, Green, Yellow, Black
 suits = ["R", "G", "Y", "B"]
@@ -10,7 +10,8 @@ points_per_card = {
     10: 10,
     5:  5}
 
-sample_inputs = [           # expected winning card and captured points
+# <trump suit> <leading card> [<other played cards>]
+sample_tricks = [           # expected winning card and captured points
     "Y 1R 12R 7Y 8R 11B",       # 7Y    15p
     "B 12B 1G 7B 14B",          # 14B   25p
     "G 6G 13G 12G RK 1G 10B",   # RK    45p
@@ -19,6 +20,17 @@ sample_inputs = [           # expected winning card and captured points
     "Y 5G 1R 14B 11G 1B",       # 11G   45p
     "Y 5G 1R 14B 11G 1B 10Y",   # 10Y   55p
     "Y 5G 1R 14B 11G 1B 10G"    # 11G   55p
+]
+
+# <leading card> [<cards in hand>]
+sample_hands = [                # expected playable cards
+    "9R 5G 7G 6B 14B 12B 8Y RK",    # 5G 7G 6B 14B 12B 8Y RK
+    "10R 5G 7G 6B 14B 12B 8Y 8R",   # 8R
+    "5R 5G 7G 6B 14R 12R 8Y RK",    # 14R 12R RK
+    "11B 5G 7G 6B 14B 12B 8Y RK",   # 6B 14B 12B RK
+    "6Y 5G 7G 6B 14B 12B 8Y RK",    # 8Y RK
+    "1Y 5Y 7G 6Y 14B 12B 8Y 10Y",   # 5Y 6Y 8Y 10Y
+    "RK 5Y 7G 6Y 14B 12B 8Y 10Y"    # 5Y 7G 6Y 14B 12B 8Y 10Y
 ]
 
 
@@ -99,6 +111,40 @@ def get_trick_cards(trick):
     return rem_trick.split(' ')
 
 
+def process_hand_on_turn(hand):
+    # assume valid input for now
+
+    leading_card, cards_in_hand = get_leading_card_and_cards_in_hand(hand)
+
+    # special case: leading card is Rook, all cards in hand are playable
+    if leading_card is rook_card:
+        return cards_in_hand
+
+    # for the next cases, get leading suit
+    leading_suit = get_card_suit(leading_card)
+
+    # if no card in hand matches leading suit, all cards are playable
+    if not any(get_card_suit(card) == leading_suit for card in cards_in_hand):
+        return cards_in_hand
+
+    # if at least one card matches leading suit, return those cards,
+    # and always include the Rook if in hand
+    playable_cards = \
+        (card for card in cards_in_hand if
+         get_card_suit(card) == leading_suit or
+         card == rook_card)
+    return playable_cards
+
+
+def get_leading_card_and_cards_in_hand(hand):
+    # the first card is the leading card
+    # all following cards are the cards in player's hand
+    cards = hand.split(' ')
+    leading_card = cards[0]
+    cards_in_hand = cards[1:]
+    return leading_card, cards_in_hand
+
+
 def get_card_rank(card):
     # assuming it is not the Rook card,
     # the rank is in the first 1 or 2 characters, the last being the suit
@@ -125,10 +171,24 @@ def get_card_points(card):
     return 0
 
 
-def main():
-    for trick in sample_inputs:
+def process_sample_tricks():
+    for trick in sample_tricks:
         winning_card, points = process_trick(trick)
         print(f'{trick} --> {winning_card} {points}p')
+
+
+def process_sample_hands():
+    for hand in sample_hands:
+        playable_cards = process_hand_on_turn(hand)
+        playable_cards_string = ' '.join(playable_cards)
+        print(f'{hand} --> {playable_cards_string}')
+
+
+def main():
+    print('Tricks')
+    process_sample_tricks()
+    print('Hands')
+    process_sample_hands()
 
 
 if __name__ == '__main__':
