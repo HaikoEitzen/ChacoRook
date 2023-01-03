@@ -1,0 +1,72 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+Card o-- Suit
+Deal o-- Suit
+
+Deck o-- Card
+Hand o-- Card
+Trick o-- Card
+Kitty o-- Card
+
+Hand o-- Player
+Trick o-- Player
+
+Deal o-- Trick
+Deal o-- Kitty
+Deal o-- Player
+Deal o-- Card
+Deal o-- Hand
+
+Game o-- Deck
+Game o-- Player
+Game o-- Deal
+
+enum Suit { }
+
+class Card {
+Suit suit
+int rank
+}
+
+class Deck {
+Card[] cards
+}
+
+class Hand {
+Card[] cards
+Player player
+}
+
+class Trick {
+Card[] cards
+Card leading_card
+Player winning_player
+}
+
+class Kitty {
+Card[] cards
+}
+
+class Player {
+string name
+int score
+}
+
+class Deal {
+int bid
+Hand[] hands_dealt
+Kitty kitty
+Player playmaker
+Suit trump_suit
+Card partner_card
+Trick[] tricks
+}
+
+class Game {
+Player[] players
+Deal[] deals
+Deck deck
+}
+
+@enduml
